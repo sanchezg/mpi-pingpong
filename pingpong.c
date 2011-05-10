@@ -7,13 +7,16 @@
 
 /* Tamaño de los datos a enviar */
 #define SIZE1	1024
+#define SIZE2	65536
+#define SIZE3	131072
+#define SIZE4	524288
 
 /* Cantidad de envíos a hacer */
 #define ENVIOS	25			
 
 int main(int argc, char **argv)
 {
-	int proc_id, n_procs, i, buffer[SIZE];
+	int proc_id, n_procs, i, buffer1[SIZE1], buffer2[SIZE2], buffer3[SIZE3], buffer4[SIZE4];
 	double t_inicio, t_transcurrido;
 	float x;
 	MPI_Status estado;
@@ -34,14 +37,6 @@ int main(int argc, char **argv)
 		system("clear");
 		printf("## Cálculo de RTT / Envío Maestro-Esclavo\n\n");
 		printf("## Total de procesadores: %d\n", n_procs);
- 
-		t_inicio = MPI_Wtime();
-		printf("## Elaborando dato ... ");
-		for (i = 0; i < SIZE; ++i)
-			x += i*i;
-		t_transcurrido = MPI_Wtime() - t_inicio;
-		printf("\n");
-		printf("## tiempo transcurrido para el calculo: %g\n", t_transcurrido);
 		printf("## Comienzo del envío\n\n");
 	}
 
@@ -51,20 +46,71 @@ int main(int argc, char **argv)
 		t_inicio = MPI_Wtime();
 		for (i = 0; i < ENVIOS; ++i)
 		{
-			buffer[0] = i;
-			MPI_Send(buffer, SIZE, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD);
-			MPI_Recv(buffer, SIZE, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD, &estado);
+			buffer1[0] = i;
+			MPI_Send(buffer1, SIZE1, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD);
+			MPI_Recv(buffer1, SIZE1, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD, &estado);
 		}
 		t_transcurrido = MPI_Wtime() - t_inicio;
-		printf("## tiempo transcurrido para el envío: %g\n", t_transcurrido);
+		printf("## tiempo transcurrido para el envío 1: %g\n", t_transcurrido);
+		
+		t_inicio = MPI_Wtime();
+		for (i = 0; i < ENVIOS; ++i)
+		{
+			buffer2[0] = i;
+			MPI_Send(buffer2, SIZE2, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD);
+			MPI_Recv(buffer2, SIZE2, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD, &estado);
+		}
+		t_transcurrido = MPI_Wtime() - t_inicio;
+		printf("## tiempo transcurrido para el envío 2: %g\n", t_transcurrido);
+
+		t_inicio = MPI_Wtime();
+		for (i = 0; i < ENVIOS; ++i)
+		{
+			buffer3[0] = i;
+			MPI_Send(buffer3, SIZE3, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD);
+			MPI_Recv(buffer3, SIZE3, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD, &estado);
+		}
+		t_transcurrido = MPI_Wtime() - t_inicio;
+		printf("## tiempo transcurrido para el envío 3: %g\n", t_transcurrido);
+
+		t_inicio = MPI_Wtime();
+		for (i = 0; i < ENVIOS; ++i)
+		{
+			buffer4[0] = i;
+			MPI_Send(buffer4, SIZE4, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD);
+			MPI_Recv(buffer4, SIZE4, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD, &estado);
+		}
+		t_transcurrido = MPI_Wtime() - t_inicio;
+		printf("## tiempo transcurrido para el envío 4: %g\n", t_transcurrido);
 	}
 	else
 	{
 		for(i = 0; i < ENVIOS; ++i)
 		{
-			MPI_Recv(buffer, SIZE, MPI_INT, MASTER, 0, MPI_COMM_WORLD, &estado);
-			buffer[0] += 1;
-			MPI_Send(buffer, SIZE, MPI_INT, MASTER, 0, MPI_COMM_WORLD);
+			MPI_Recv(buffer1, SIZE1, MPI_INT, MASTER, 0, MPI_COMM_WORLD, &estado);
+			buffer1[0] += 1;
+			MPI_Send(buffer1, SIZE1, MPI_INT, MASTER, 0, MPI_COMM_WORLD);
+		}
+
+		for(i = 0; i < ENVIOS; ++i)
+		{
+			MPI_Recv(buffer2, SIZE2, MPI_INT, MASTER, 0, MPI_COMM_WORLD, &estado);
+			buffer2[0] += 1;
+			MPI_Send(buffer2, SIZE2, MPI_INT, MASTER, 0, MPI_COMM_WORLD);
+		}
+
+		for(i = 0; i < ENVIOS; ++i)
+		{
+			MPI_Recv(buffer3, SIZE3, MPI_INT, MASTER, 0, MPI_COMM_WORLD, &estado);
+			buffer3[0] += 1;
+			MPI_Send(buffer3, SIZE3, MPI_INT, MASTER, 0, MPI_COMM_WORLD);
+		}
+
+		for(i = 0; i < ENVIOS; ++i)
+		{
+			MPI_Recv(buffer4, SIZE4, MPI_INT, MASTER, 0, MPI_COMM_WORLD, &estado);
+			buffer4[0] += 1;
+			MPI_Send(buffer4, SIZE4, MPI_INT, MASTER, 0, MPI_COMM_WORLD);
 		}
 	}
 
