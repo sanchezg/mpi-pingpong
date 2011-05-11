@@ -1,24 +1,12 @@
 #include <stdio.h>
 #include <mpi.h>
 #include <stdlib.h>
-
-#define MASTER	0
-#define ESCLAVO	1
-
-/* Tamaño de los datos a enviar */
-#define SIZE1	1024
-#define SIZE2	65536
-#define SIZE3	131072
-#define SIZE4	524288
-
-/* Cantidad de envíos a hacer */
-#define ENVIOS	25			
+#include "pingpong.h"
 
 int main(int argc, char **argv)
 {
 	int proc_id, n_procs, i, buffer1[SIZE1], buffer2[SIZE2], buffer3[SIZE3], buffer4[SIZE4];
 	double t_inicio, t_transcurrido;
-	float x;
 	MPI_Status estado;
 
 	/* Inicio del entorno MPI */
@@ -27,6 +15,12 @@ int main(int argc, char **argv)
 	/* Obtener rango y tamaño del comm_world */
 	MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
 	MPI_Comm_size(MPI_COMM_WORLD, &n_procs);
+
+	if (n_procs > 2)
+	{
+		printf("## Este programa utiliza 2 procesos\n");
+		exit(EXIT_FAILURE);
+	}
 
 	/* Sincronizar a todos los procesos */
 	MPI_Barrier(MPI_COMM_WORLD);
@@ -37,6 +31,7 @@ int main(int argc, char **argv)
 		system("clear");
 		printf("## Cálculo de RTT / Envío Maestro-Esclavo\n\n");
 		printf("## Total de procesadores: %d\n", n_procs);
+
 		printf("## Comienzo del envío\n\n");
 	}
 
