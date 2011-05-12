@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-	int proc_id, n_procs, i, buffer1[SIZE1], buffer2[SIZE2], buffer3[SIZE3], buffer4[SIZE4];
+	int proc_id, n_procs, i, envios, cant_datos, buffer1[SIZE1], buffer2[SIZE2], buffer3[SIZE3], buffer4[SIZE4];
 	double t_inicio, t_transcurrido;
 	MPI_Status estado;
 
@@ -32,14 +32,26 @@ int main(int argc, char **argv)
 		printf("## Cálculo de RTT / Envío Maestro-Esclavo\n\n");
 		printf("## Total de procesadores: %d\n", n_procs);
 
-		printf("## Comienzo del envío\n\n");
+		/* Leer de stdin la cantidad de datos y cantidad de envíos a hacer */
+		printf(MENU_DATOS);
+		scanf("%d", &cant_datos);
+		printf(MENU_ENVIOS);
+		scanf("%d", &envios);
+
+		printf("## Comienzo del envío con:\n");
+		printf("## %d datos, %d envios;\n", cant_datos, envios);
+		printf("## Tamaño de datos:\n");
+		printf("## \tSIZE1 = %d\n", SIZE1);
+		printf("## \tSIZE2 = %d\n", SIZE2);
+		printf("## \tSIZE3 = %d\n", SIZE3);
+		printf("## \tSIZE4 = %d\n", SIZE4);
 	}
 
 	MPI_Barrier(MPI_COMM_WORLD);
 	if (proc_id == MASTER)
 	{
 		t_inicio = MPI_Wtime();
-		for (i = 0; i < ENVIOS; ++i)
+		for (i = 0; i < envios; ++i)
 		{
 			buffer1[0] = i;
 			MPI_Send(buffer1, SIZE1, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD);
@@ -47,7 +59,7 @@ int main(int argc, char **argv)
 		}
 		t_transcurrido = MPI_Wtime() - t_inicio;
 		printf("## tiempo transcurrido para el envío 1: %g\n", t_transcurrido);
-		
+	
 		t_inicio = MPI_Wtime();
 		for (i = 0; i < ENVIOS; ++i)
 		{
@@ -65,6 +77,7 @@ int main(int argc, char **argv)
 			MPI_Send(buffer3, SIZE3, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD);
 			MPI_Recv(buffer3, SIZE3, MPI_INT, ESCLAVO, 0, MPI_COMM_WORLD, &estado);
 		}
+
 		t_transcurrido = MPI_Wtime() - t_inicio;
 		printf("## tiempo transcurrido para el envío 3: %g\n", t_transcurrido);
 

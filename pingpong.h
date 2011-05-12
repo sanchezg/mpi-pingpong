@@ -14,4 +14,15 @@
 /* Cantidad de envíos a hacer */
 #define ENVIOS	50
 
+/* Menu del programa */
+#define MENU_DATOS	"## Ingrese la cantidad de datos:\n\
+				## 1) 10 datos.\n\
+				## 2) 25 datos.\n\
+				## 3) 50 datos.\n"
+
+#define MENU_ENVIOS	"## Ingrese la cantidad de envíos:\n\
+					## 1)    100\n\
+					## 2)  1.000\n\
+					## 3) 10.000\n\"
+
 #endif /* _PINGPONG_H_ */
